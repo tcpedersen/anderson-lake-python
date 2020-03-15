@@ -51,7 +51,7 @@ class HestonModel:
         return np.exp(exponent)
 
     def log_cf_real(self, alpha, tau) -> float:
-        # Evaluation of ln phi(-1j * (1 + alpha))
+        # Evaluation of ln HestomModel.cf(-1j * (1 + alpha))
         beta = self.kappa - self.rho * self.sigma * (1 + alpha)
         Dsq = beta**2 - self.sigma**2 * (1 + alpha) * alpha
         
@@ -73,3 +73,12 @@ class HestonModel:
         B = alpha * (1 + alpha) * sinhdt / nume
 
         return A + B * self.vol
+
+class BlackScholesModel():
+    def __init__(self, forward, vol, rate):
+        self.forward = forward
+        self.vol = vol
+        self.rate = rate
+
+    def cf(self, z, tau):
+        return np.exp(-0.5 * self.vol * tau * z * (z + 1j))
