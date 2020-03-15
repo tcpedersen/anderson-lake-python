@@ -25,7 +25,7 @@ def bs_option_price(model: BlackScholesModel,
 # === Anderson-Lake Heston closed form pricing function
 def anderson_lake_expsinh(model: HestonModel, 
                             option: EuropeanCallOption) -> float:
-    scheme = ExpSinhQuadrature(init_step_size=0.5, error_tol=1e-4, 
+    scheme = ExpSinhQuadrature(init_step_size=0.5, error_tol=1e-12, 
                                 max_iter=10000)
     return anderson_lake(model, option, scheme)
 
