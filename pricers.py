@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from torch.quasirandom import SobolEngine
+
 from scipy.optimize import brentq, fminbound
 from scipy.stats import norm
 
@@ -20,7 +22,7 @@ def bs_option_price(model: BlackScholesModel,
                   option.strike * norm.cdf(d2))
 
 # ==============================================================================
-# === Heston call option pricing function
+# === Anderson-Lake Heston closed form pricing function
 def anderson_lake_expsinh(model: HestonModel, 
                             option: EuropeanCallOption) -> float:
     scheme = ExpSinhQuadrature(init_step_size=0.5, error_tol=1e-4, 
@@ -75,7 +77,8 @@ def calc_alpha(model: HestonModel, option: EuropeanCallOption) -> float:
     alpha_min, alpha_max = alpha_min_max(model, option)
     if omega >= 0:
         alpha, val = locate_optimal_alpha(model, option, alpha_min, -1 - eps)
-    elif omega < 0 and model.kappa - model.rho * model.sigma > 0:
+    elif omega < 0 and model.kappa - model.rho * model.sigma > 0 \
+        and abs(alpha_max) > 1e-3:
         alpha, val = locate_optimal_alpha(model, option, eps, alpha_max)
     else:
         alpha, val = locate_optimal_alpha(model, option, eps, alpha_max)
@@ -152,3 +155,36 @@ def alpha_min_max(model: HestonModel,
                   args=(model, option))
 
     return kmin - 1, kmax - 1
+
+# ==============================================================================
+# === Heston Monte Carlo
+def heston_monte_carlo(model: HestonModel, option, num_steps, num_paths):
+    # Generate brownian motion increments from a sobol sequence
+    num_stochastic_processes = 2
+    sobol = SobolEngine(num_stochastic_processes * num_steps)
+    samples = norm.ppf(sobol.draw(num_paths))
+    increment1, increment2 = np.hsplit(samples, num_stochastic_processes)
+
+    kappa, theta, sigma, rho = model.kappa, model.theta, model.sigma, model.rho
+
+    dt = 1 / num_steps
+
+    ones = np.ones(num_paths).reshape(-1, 1)
+    trunc_vol = ones * model.vol
+    true_vol = trunc_vol
+    moved_forward = ones * model.forward
+
+    dw1 = np.array(np.sqrt(dt) * increment1)
+    dw2 = np.array(rho * np.sqrt(dt) * increment1 + \
+                   np.sqrt(1.0 - rho**2) * np.sqrt(dt) * increment2)
+
+    for num_step in range(int(num_steps * option.tau)):
+        moved_forward *= np.exp(np.sqrt(true_vol) * dw1[:, num_step, None])
+        
+        positive_part_trunc_vol = np.maximum(trunc_vol, 0)
+        trunc_vol += kappa * (theta - positive_part_trunc_vol) * dt + \
+            sigma * np.sqrt(positive_part_trunc_vol) * dw2[:, num_step, None]
+
+        true_vol = np.maximum(trunc_vol, 0)
+
+    return np.exp(- model.rate * option.tau) * np.mean(option(moved_forward))

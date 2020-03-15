@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from exceptions import NoConvergenceError
 
 class ExpSinhQuadrature():
     def __init__(self, init_step_size, error_tol, max_iter):
@@ -22,6 +23,8 @@ class ExpSinhQuadrature():
                 break
             else:
                 self.step_size /= 2
+        else:
+            raise NoConvergenceError("integral did not converge within max_iter")
         
         return new_estimate
 
@@ -67,7 +70,3 @@ class ExpSinhQuadrature():
         zero_n_sum = self.eval_transformed_func(func, 0);
     
         return self.step_size * (negative_n_sum + zero_n_sum + positive_n_sum)
-
-#def f(x): return np.exp(-x)
-#rule = ExpSinhQuadrature(0.5, 1e-4, 1000)
-#rule(f)
