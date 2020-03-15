@@ -52,6 +52,8 @@ class ExpSinhQuadrature():
             else: 
                 positive_n_sum += new_term;
                 threshold = abs(positive_n_sum * self.error_tol)
+        else:
+            raise NoConvergenceError("positive partial sum did not converge")
     
         # Negative n
         new_term = threshold = 0;
@@ -65,6 +67,8 @@ class ExpSinhQuadrature():
             else:
                 negative_n_sum += new_term;
                 threshold = abs(negative_n_sum * self.error_tol)
+        else:
+            raise NoConvergenceError("negative partial sum did not converge")
         
         # Zero n
         zero_n_sum = self.eval_transformed_func(func, 0);
