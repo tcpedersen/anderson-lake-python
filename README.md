@@ -1,4 +1,4 @@
-# Implementation of the Anderson-Lake pricing scheme in Python
+# Implementation of the Anderson-Lake pricing scheme for the Heston Stochastic Volatility model in Python
 Full Python implementation of the Heston pricing scheme developed by Leif Anderson and Mark Lake in their article Robust High-Precision Option Pricing by Fourier Transforms: Contour Deformations and Double-Exponential Quadrature.
 
 The file working-example.py contains a working example of how to use the two Anderson-Lake functions.
