@@ -19,7 +19,7 @@ model = HestonModel(100, 0.1197**2, 1.98937, 0.108977**2, 0.33147, 0.0258519, 0)
 # time to maturity, strike
 option = EuropeanCallOption(1, 100)
 
-# Calculate the price
+# Calculate the price (should return 4.171)
 price = anderson_lake_expsinh(model, option)
 print(f"Price of option using anderson_lake_expsinh: {price}.")
 
@@ -34,6 +34,6 @@ scheme = ExpSinhQuadrature(0.5, 1e-12, 1000)
 model = HestonModel(100, 0.1197**2, 1.98937, 0.108977**2, 0.33147, 0.0258519, 0)
 option = EuropeanCallOption(1, 100)
 
-# Calculate the price
+# Calculate the price (should return 4.171)
 price = anderson_lake(model, option, scheme)
 print(f"Price of option using anderson_lake: {price}.")
