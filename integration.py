@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import scipy
 from exceptions import NoConvergenceError
 
 class ExpSinhQuadrature():
@@ -74,3 +75,15 @@ class ExpSinhQuadrature():
         zero_n_sum = self.eval_transformed_func(func, 0);
     
         return self.step_size * (negative_n_sum + zero_n_sum + positive_n_sum)
+
+
+class GaussianQuadrature:
+    def __init__(self, abs_tol, relative_tol, max_iter):
+        self.abs_tol = abs_tol
+        self.relative_tol = relative_tol
+        self.max_iter = max_iter
+    
+    def __call__(self, func):
+        return scipy.integrate.quad(func, 0, np.inf, epsabs=self.abs_tol, 
+                                    epsrel=self.relative_tol, 
+                                    limit=self.max_iter)[0]

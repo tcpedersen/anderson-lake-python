@@ -2,7 +2,7 @@
 
 # import local modules
 from pricers import anderson_lake, anderson_lake_expsinh
-from integration import ExpSinhQuadrature
+from integration import ExpSinhQuadrature, GaussianQuadrature
 from models import HestonModel
 from options import EuropeanCallOption
 
@@ -28,7 +28,7 @@ print(f"Price of option using anderson_lake_expsinh: {price}.")
 # Define the quadrature method the function should use to integrate. Here the 
 # one suggested in the Anderson-Lake article is used. It is implemented in 
 # integration.py
-scheme = ExpSinhQuadrature(0.5, 1e-12, 1000)
+scheme = GaussianQuadrature(1e-12, 1e-12, 1000)
 
 # Define the model and option as in the simple case.
 model = HestonModel(100, 0.1197**2, 1.98937, 0.108977**2, 0.33147, 0.0258519, 0)
