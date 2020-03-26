@@ -8,4 +8,4 @@ The file working-example.py contains a working example of how to use the two And
 The file also includes a closed-form Black-Scholes formula **bs_call_option** and a Monte Carlo implementation of the Heston model **heston_monte_carlo** capable of calculating prices for any type of simple option.
 3. models.py contains the class **HestonModel** used in the functions anderson_lake and heston_monte_carlo. 
 4. options.py contains the class **EuropeanCallOption** used in all pricer functions.
-5. integration.py contains the class **ExpSinhQuadrature** used by **anderson_lake** and implicitly in **anderson_lake_expsinh**. The class computes integrals over the positive real line.
+5. integration.py contains the class **GaussianQuadrature** (suggested) and **ExpSinhQuadrature** used by **anderson_lake** and implicitly in **anderson_lake_expsinh**. The classes computes integrals over the positive real line.
