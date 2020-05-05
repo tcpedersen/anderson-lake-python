@@ -10,7 +10,7 @@ class ExpSinhQuadrature():
         self.max_iter = max_iter
         
         self.step_size = self.init_step_size
-            
+
     def __call__(self, func):
         new_estimate = 0
         old_estimate = 0
@@ -26,7 +26,7 @@ class ExpSinhQuadrature():
                 self.step_size /= 2
         else:
             raise NoConvergenceError("integral did not converge within max_iter")
-        
+
         return new_estimate
 
     def abscissa(self, n):
@@ -70,7 +70,7 @@ class ExpSinhQuadrature():
                 threshold = abs(negative_n_sum * self.error_tol)
         else:
             raise NoConvergenceError("negative partial sum did not converge")
-        
+
         # Zero n
         zero_n_sum = self.eval_transformed_func(func, 0);
     
