@@ -26,10 +26,12 @@ class HestonModel:
 
     def cf(self, z, tau) -> complex:
         beta = self.kappa - 1j * self.sigma * self.rho * z
-        D = np.sqrt(beta**2 + self.sigma**2 * z * (z + 1j))
+        sigma_sq = self.sigma * self.sigma
+
+        D = np.sqrt(beta * beta + sigma_sq * z * (z + 1j))
 
         if beta.real * D.real + beta.imag * D.imag > 0:
-            r = - self.sigma**2 * z * (z + 1j) / (beta + D)
+            r = - sigma_sq * z * (z + 1j) / (beta + D)
         else:
             r = beta - D
 
@@ -38,16 +40,16 @@ class HestonModel:
         else:
             y = -tau / 2
 
-        A = self.kappa * self.theta / self.sigma**2 * \
+        A = self.kappa * self.theta / sigma_sq * \
             (r * tau - 2 * np.log1p(- r * y))
-        
+
         B = z * (z + 1j) * y / (1 - r * y)
-        
+
         exponent = A + B * self.vol
-        
+
         if exponent > NUMPY_LOG_COMPLEX128_MAX:
             raise OverflowError("too large exponent in characteristic function")
-        
+
         return np.exp(exponent)
 
     def log_cf_real(self, alpha, tau) -> float:
